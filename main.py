@@ -12,7 +12,7 @@ from langchain.chat_models import init_chat_model
 
 load_dotenv()
 
-llm = init_chat_model( "anthropic:claude-3-5-sonnet-latest" )
+# llm = init_chat_model( "anthropic:claude-3-5-sonnet-latest" )
 
 class State( TypedDict ):
     messages: Annotated[ list, add_messages ]
@@ -28,31 +28,46 @@ class State( TypedDict ):
     final_answer: str | None
 
 def google_search( state: State ):
-    pass
+    user_question = state.get( "user_question", "" )
+    print( f"Google searching for: { user_question }" )
+
+    google_results = []
+
+    return { "google_results": google_results }
 
 def bing_search( state: State ):
-    pass
+    user_question = state.get( "user_question", "" )
+    print( f"Bing searching for: { user_question }" )
+
+    bing_results = []
+
+    return { "bing_results": bing_results }
 
 def reddit_search( state: State ):
-    pass
+    user_question = state.get( "user_question", "" )
+    print( f"Reddit searching for: { user_question }" )
+
+    reddit_results = []
+
+    return { "reddit_results": reddit_results }
 
 def analyze_reddit_posts( state: State ):
-    pass
+    return { "selected_reddit_urls": [] }
 
 def retrieve_reddit_posts( state: State ):
-    pass
+    return { "reddit_post_data": [] }
 
 def analyze_google_results( state: State ):
-    pass
+    return { "google_analysis": "" }
 
 def analyze_bing_results( state: State ):
-    pass
+    return { "bing_analysis": "" }
 
 def analyze_reddit_results( state: State ):
-    pass
+    return { "reddit_analysis": "" }
 
 def synthesize_analysis( state: State ):
-    pass
+    return { "final_answer": "" }
 
 graph_builder = StateGraph( State )
 
@@ -93,26 +108,26 @@ def run_chatbot():
     print( "Starting chatbot..." )
     print( "Type 'exit' to end the chatbot" )
 
-    # Initial state
-    state = {
-        "messages": [ { "role": "user", "content": user_input } ],
-        "user_question": user_input,
-        "google_results": None,
-        "bing_results": None,
-        "reddit_results": None,
-        "selected_reddit_urls": None,
-        "reddit_post_data": None,
-        "google_analysis": None,
-        "bing_analysis": None,
-        "reddit_analysis": None,
-        "final_answer": None,
-    }
-
     while True:
         user_input = input( "You: " )
         if user_input.lower() == "exit":
             print( "Goodbye!" )
             break
+
+        # Initial state
+        state = {
+            "messages": [ { "role": "user", "content": user_input } ],
+            "user_question": user_input,
+            "google_results": None,
+            "bing_results": None,
+            "reddit_results": None,
+            "selected_reddit_urls": None,
+            "reddit_post_data": None,
+            "google_analysis": None,
+            "bing_analysis": None,
+            "reddit_analysis": None,
+            "final_answer": None,
+        }
 
         print( "\nStarting parallel research process..." )
         print( "Launching Google, Bing, and Reddit searches...\n" )
