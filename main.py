@@ -9,6 +9,8 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 # LangChain
 from langchain.chat_models import init_chat_model
+# Web Operations
+from web_operations import serp_search
 
 load_dotenv()
 
@@ -31,7 +33,8 @@ def google_search( state: State ):
     user_question = state.get( "user_question", "" )
     print( f"Google searching for: { user_question }" )
 
-    google_results = []
+    google_results = serp_search( user_question )
+    print( f"Google results: { google_results }" )
 
     return { "google_results": google_results }
 
@@ -39,7 +42,8 @@ def bing_search( state: State ):
     user_question = state.get( "user_question", "" )
     print( f"Bing searching for: { user_question }" )
 
-    bing_results = []
+    bing_results = serp_search( user_question, engine = "bing" )
+    print( f"Bing results: { bing_results }" )
 
     return { "bing_results": bing_results }
 
