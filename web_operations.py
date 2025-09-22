@@ -2,10 +2,12 @@ from dotenv import load_dotenv
 import os
 import requests
 from urllib.parse import quote_plus
+from snapshot_operations import poll_snapshot_status, download_snapshot
 
 load_dotenv()
 
 BRIGHT_DATA_URL = "https://api.brightdata.com/request"
+BRIGHT_DATA_TRIGGER_URL = "https://api.brightdata.com/datasets/v3/trigger"
 
 # **kwar is used to allow the function to accept any number of keyword arguments
 # i.e _make_api_request( url, headers=headers, params=params )
@@ -54,3 +56,99 @@ def serp_search( query, engine = "google" ):
     }
 
     return extracted_data
+
+def _trigger_and_download_snapshot( trigger_url, params, data, operation = "operation" ):
+    trigger_result = _make_api_request( trigger_url, params = params, json = data )
+
+    if not trigger_result:
+        return None
+    
+    snapshot_id = trigger_result.get( "snapshot_id" )
+
+    if not snapshot_id:
+        print( "No snapshot ID found" )
+        return None
+
+    if not poll_snapshot_status( snapshot_id ):
+        print( "Snapshot status is not ready" )
+        return None
+    
+    raw_data = download_snapshot( snapshot_id )
+
+    return raw_data
+
+def reddit_search_api( keyword, date = "All time", sort_by = "Hot", num_of_posts = 75 ):
+    params = {
+        "dataset_id": os.getenv( "BRIGHTDATA_DATASET_ID" ),
+        "include_errors": "true",
+        "type": "discover_new",
+        "discover_by": "keyword",
+    }
+
+    data = [
+        {
+          "keyword": keyword,
+          "date": date,
+          "sort_by": sort_by,
+          "num_of_posts": num_of_posts,
+        }
+    ]
+
+    raw_data = _trigger_and_download_snapshot( BRIGHT_DATA_TRIGGER_URL, params, data, operation = "reddit" )
+
+    if not raw_data:
+        return None
+
+    parsed_data = []
+
+    for post in raw_data:
+        parsed_data.append( 
+            { "title": post.get( "title" ),
+              "url": post.get( "url" )
+            } 
+        )
+    
+    return {
+        "parsed_data": parsed_data,
+        "total_posts": len( parsed_data )
+    }
+
+def reddit_post_retrieval( urls, days_back = 10, load_all_replies = False, comment_limit = "" ):
+    if not urls:
+        return None
+
+    params = {
+        "dataset_id": os.getenv( "BRIGHTDATA_URL_DATASET_ID" ),
+        "include_errors": "true",
+    }
+
+    data = [
+        {
+            "urls": url,
+            "days_back": days_back,
+            "load_all_replies": load_all_replies,
+            "comment_limit": comment_limit
+        }
+        for url in urls
+    ]
+
+    raw_data = _trigger_and_download_snapshot( BRIGHT_DATA_TRIGGER_URL, params, data, operation = "reddit comments" )
+
+    if not raw_data:
+        return None
+
+    parsed_comments = []
+
+    for comment in raw_data:
+        parsed_comments.append( 
+            { "comment_id": comment.get( "comment_id" ),
+              "content": comment.get( "comment" ),
+              "date": comment.get( "date`_posted" ),
+            } 
+        )
+    
+    return {
+        "comments": parsed_comments,
+        "total_comments": len( parsed_comments )
+    }
+    
