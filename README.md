@@ -36,27 +36,27 @@ The application uses a sophisticated graph topology that orchestrates the follow
 ## Project Structure
 
 ```
-├── main.py                    # Application entry point
-├── chatbot.py                 # Interactive chatbot interface
-├── pyproject.toml            # Project dependencies and configuration
+├── main.py                        # Application entry point
+├── chatbot.py                     # Interactive chatbot interface
+├── pyproject.toml                 # Project dependencies and configuration
 └── src/
     ├── graph/
-    │   ├── graph_builder.py   # Graph construction logic
-    │   ├── topology.py        # Graph topology and edge definitions
-    │   ├── registry.py        # Node registration
-    │   ├── schemas.py         # Data models and state definitions
+    │   ├── graph_builder.py       # Graph construction logic
+    │   ├── topology.py            # Graph topology and edge definitions
+    │   ├── registry.py            # Node registration
+    │   ├── schemas.py             # Data models and state definitions
     │   └── nodes/
-    │       ├── search.py      # Search operation nodes
-    │       ├── retrieve.py    # Data retrieval nodes
-    │       ├── analysis.py    # Analysis operation nodes
-    │       └── synthesize.py  # Synthesis operation nodes
+    │       ├── search.py          # Search operation nodes
+    │       ├── retrieve.py        # Data retrieval nodes
+    │       ├── analysis.py        # Analysis operation nodes
+    │       └── synthesize.py      # Synthesis operation nodes
     ├── llm/
-    │   └── client.py          # LLM client configuration
+    │   └── client.py              # LLM client configuration
     ├── operations/
-    │   ├── web_operations.py  # Web scraping and API operations
+    │   ├── web_operations.py      # Web scraping and API operations
     │   └── snapshot_operations.py # Data snapshot operations
     └── prompts/
-        └── templates.py       # Prompt templates
+        └── templates.py           # Prompt templates
 ```
 
 ## Installation
