@@ -1,6 +1,5 @@
 from typing import Dict, Any
 
-
 class PromptTemplates:
     """Container for all prompt templates used in the research assistant."""
 

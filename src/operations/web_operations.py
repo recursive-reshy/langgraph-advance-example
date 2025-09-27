@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import requests
 from urllib.parse import quote_plus
-from snapshot_operations import poll_snapshot_status, download_snapshot
+from .snapshot_operations import poll_snapshot_status, download_snapshot
 
 load_dotenv()
 
